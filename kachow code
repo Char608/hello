@@ -1,0 +1,53 @@
+import pygame
+import random
+
+# Initialize Pygame
+pygame.init()
+
+# Set up the screen
+screen_width, screen_height = 800, 600
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption("Horror Kachow")
+
+# Load Kachow image
+Kachow_img = pygame.image.load('Kachow.png')
+Kachow_width, Kachow_height = 100, 100
+Kachow_img = pygame.transform.scale(Kachow_img, (Kachow_width, Kachow_height))
+
+# Load "kachow" sound effect
+kachow_sound = pygame.mixer.Sound('kachow.wav')
+
+# Kachow starting position
+Kachow_x, Kachow_y = random.randint(0, screen_width - Kachow_width), random.randint(0, screen_height - Kachow_height)
+
+# Number of blurred images
+num_blurs = 5
+
+# Main game loop
+running = True
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Move Kachow at the speed of light
+    Kachow_x, Kachow_y = pygame.mouse.get_pos()  # Teleport Kachow to the mouse position
+
+    # Play "kachow" sound effect
+    if random.random() < 0.05:  # Adjust the probability to control how often the sound is played
+        kachow_sound.play()
+
+    # Draw everything
+    screen.fill((0, 0, 0))
+    for i in range(num_blurs):
+        alpha = 255 - (i * (255 // num_blurs))  # Calculate alpha value for transparency
+        blur_surface = pygame.Surface((Kachow_width, Kachow_height), pygame.SRCALPHA)
+        blur_surface.fill((255, 255, 255, alpha))  # Fill surface with semi-transparent white
+        screen.blit(blur_surface, (Kachow_x - i, Kachow_y - i))  # Draw semi-transparent image
+    pygame.display.flip()
+
+    # Control the speed of the loop
+    pygame.time.Clock().tick(30)
+
+# Quit Pygame
+pygame.quit()
